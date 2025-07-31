@@ -4,7 +4,8 @@ import mlflow
 import tempfile
 import os
 import wandb
-import hydra
+import hydra 
+from hydra.utils import to_absolute_path
 from omegaconf import DictConfig
 
 _steps = [
@@ -51,10 +52,19 @@ def go(config: DictConfig):
             )
 
         if "basic_cleaning" in active_steps:
-            ##################
-            # Implement here #
-            ##################
-            pass
+            _ = mlflow.run(
+                to_absolute_path("src/basic_cleaning"),
+                "main",
+                parameters={
+                    "input_artifact": config["etl"]["cleaning"]["input_artifact"],
+                    "output_artifact": config["etl"]["cleaning"]["output_artifact"],
+                    "output_type": config["etl"]["cleaning"]["output_type"],
+                    "output_description": config["etl"]["cleaning"]["output_description"],
+                    "min_price": config["etl"]["min_price"],
+                    "max_price": config["etl"]["max_price"],
+                }
+            )
+
 
         if "data_check" in active_steps:
             ##################

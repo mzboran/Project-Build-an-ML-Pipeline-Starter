@@ -273,7 +273,7 @@ if __name__ == "__main__":
         "--rf_config",
         help="Random forest configuration. A JSON dict that will be passed to the "
         "scikit-learn constructor for RandomForestRegressor.",
-        default="{}",
+        type=str,
         required=True,
     )
 

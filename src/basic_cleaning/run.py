@@ -13,7 +13,19 @@ logger = logging.getLogger()
 
 # DO NOT MODIFY
 def go(args):
+    """
+    Perform basic data cleaning and log the cleaned dataset as a W&B artifact.
 
+    Parameters
+    ----------
+    args : argparse.Namespace
+        input_artifact (str): Name of the raw dataset artifact to download.
+        output_artifact (str): Name of the cleaned dataset artifact to upload.
+        output_type (str): Type label for the output artifact.
+        output_description (str): Description of the output artifact.
+        min_price (float): Minimum valid price for filtering listings.
+        max_price (float): Maximum valid price for filtering listings.
+    """
     run = wandb.init(job_type="basic_cleaning")
     run.config.update(args)
 
@@ -30,8 +42,10 @@ def go(args):
     # Convert last_review to datetime
     df['last_review'] = pd.to_datetime(df['last_review'])
 
+    #Drop out-of-bounds values
     idx = df['longitude'].between(-74.25, -73.50) & df['latitude'].between(40.5, 41.2)
     df = df[idx].copy()
+
     # Save the cleaned file
     df.to_csv('clean_sample.csv',index=False)
 
@@ -45,8 +59,7 @@ def go(args):
     run.log_artifact(artifact)
 
 
-# TODO: In the code below, fill in the data type for each argumemt. The data type should be str, float or int. 
-# TODO: In the code below, fill in a description for each argument. The description should be a string.
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="A very basic data cleaning")
